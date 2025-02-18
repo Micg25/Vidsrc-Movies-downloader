@@ -21,13 +21,34 @@ profile.set_preference("network.proxy.ssl_port", int(str(proxy.proxy).split(':')
 profile.update_preferences()
 options=webdriver.FirefoxOptions()
 options.profile = profile
-browser = webdriver.Firefox(options=options)
+
 
 #setting the proxy in order to make it receive http/https traffic
 proxy.new_har("LOG:", options={'captureHeaders': True, 'captureContent': True})
 
 #getting to stream link
-browser.get("https://vidsrc.me/embed/movie?imdb=....") #insert the url of the movie you want to download
+movieinput=input("Insert the movie name: ")
+
+
+with open ("Movies_vidsrc.json", "r", encoding="utf-8") as file:
+    moviesjson=json.load(file)
+
+moviematch=[]
+for movie in moviesjson:
+    for result in movie["result"]:
+        if movieinput in result["title"].lower():
+            moviematch.append({"title":result["title"],"url":result["embed_url"]})
+
+
+for n,movie in enumerate(moviematch):
+    print(f"{n}. {movie}")
+
+choice=int(input("Choose a movie: "))
+url=moviematch[choice]["url"]
+print(f"You chose:{moviematch[choice]["title"]}, {url} ")
+#getting to stream link
+browser = webdriver.Firefox(options=options)
+browser.get(url) #insert the url of the movie you want to download
 time.sleep(8)
 result = proxy.har
 browser.quit()
