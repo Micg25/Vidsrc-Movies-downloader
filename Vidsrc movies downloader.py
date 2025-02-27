@@ -34,10 +34,12 @@ with open ("Movies_vidsrc.json", "r", encoding="utf-8") as file:
     moviesjson=json.load(file)
 
 moviematch=[]
+pattern = re.compile(rf"\b{re.escape(movieinput)}\b", re.IGNORECASE)
+
 for movie in moviesjson:
     for result in movie["result"]:
-        if movieinput in result["title"].lower():
-            moviematch.append({"title":result["title"],"url":result["embed_url"]})
+        if pattern.search(result["title"]):
+            moviematch.append({"title": result["title"], "url": result["embed_url"]})
 
 
 for n,movie in enumerate(moviematch):
